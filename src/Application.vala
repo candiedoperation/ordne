@@ -1,53 +1,37 @@
 public class Application : Gtk.Application {
-    protected override void activate () {   
-        //Gtk.ApplicationWindow app_window = new Gtk.ApplicationWindow (this);
-             
-        var gtk_settings = Gtk.Settings.get_default ();
-        var hdy_window = new Hdy.ApplicationWindow ();
-        var header_bar = new Hdy.HeaderBar ();
-        var overlaybar = new Granite.Widgets.OverlayBar ();
+    protected override void activate () {
+        Hdy.init ();
+    
+        var granite_settings = Granite.Settings.get_default ();
+        var gtk_settings = Gtk.Settings.get_default ();                        
         
-        hdy_window.application = this;
-
-        var dark_mode_switch = new Granite.ModeSwitch.from_icon_name (
-            "display-brightness-symbolic",
-            "weather-clear-night-symbolic"
-        );
+        gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
+        granite_settings.notify["prefers-color-scheme"].connect (() => {
+            gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
+        });
         
-        //New Document
         var welcome_page = new Granite.Widgets.Welcome ("Ordne", "A simple Pomodoro Timer.");
         welcome_page.append ("document-open-recent", "Start Working", "Begin the Working Countdown.");
         welcome_page.append ("preferences-system", "Pomodoro Preferences", "Change Break and Working Duration");
+        welcome_page.append ("process-stop", "Close", "Close the Application");
         
-        var grid_welcome = new Gtk.Grid () {
-            orientation = Gtk.Orientation.VERTICAL
-        };  
-
-        dark_mode_switch.primary_icon_tooltip_text = ("Light background");
-        dark_mode_switch.secondary_icon_tooltip_text = ("Dark background");
-        dark_mode_switch.valign = Gtk.Align.CENTER;
-        dark_mode_switch.bind_property ("active", gtk_settings, "gtk-application-prefer-dark-theme", GLib.BindingFlags.BIDIRECTIONAL);
-
-        header_bar.show_close_button = true;
-        header_bar.title = "Ordne";
-        header_bar.pack_end(dark_mode_switch);  
+        var grid_welcome = new Gtk.Grid ();
+        grid_welcome.attach(welcome_page, 0, 1);                           
         
-        grid_welcome.add(header_bar);
-        grid_welcome.add(welcome_page);       
+        var grid = new Gtk.Grid ();
+        grid.attach(grid_welcome, 0, 1);
         
-        hdy_window.window_position = Gtk.WindowPosition.CENTER;
-        hdy_window.set_default_size(1200, 700);
-        hdy_window.add(grid_welcome);
-        //main_window.set_titlebar(header_bar);
-        //main_window.add(grid_welcome); //Adds the welcome grid to the window
+        var windowhandle = new Hdy.WindowHandle();
+        windowhandle.add(grid);
         
-        //hdy_window.add (main_window);
+        var hdy_window = new Hdy.Window ();    
+        hdy_window.application = this;
+        hdy_window.title = ("Ordne");
+        hdy_window.add(windowhandle);
+        hdy_window.set_size_request (600, 500);
+        hdy_window.window_position = Gtk.WindowPosition.CENTER;      
+        
         hdy_window.show_all();
-        //main_window.show_all();
-    }
-    
-    public static void initialize_application() {
-        print("Hello");
     }
 
     public static int main (string[] args) {
