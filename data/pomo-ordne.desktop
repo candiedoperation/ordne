@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Ordne
+GenericName=Pomodoro Timer
+Comment=Simple Pomodoro Timer
+Categories=Utility;Education;Office;
+Exec=com.github.candiedoperation.ordne
+Icon=com.github.candiedoperation.ordne
+Terminal=false
+Type=Application
+Keywords=Timer;Pomodoro;

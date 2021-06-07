@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema path="/com/github/candiedoperation/ordne/" id="com.github.candiedoperation.ordne">
+    <key name="pref-working-duration" type="i">
+      <default>30</default>
+      <summary>Working duration</summary>
+      <description>User Preffered Working Duration</description>
+    </key>
+    <key name="pref-break-duration" type="i">
+      <default>15</default>
+      <summary>Break duration</summary>
+      <description>User Preffered Break Duration</description>
+    </key>    
+  </schema>
+</schemalist>
