@@ -15,7 +15,8 @@ public class Application : Gtk.Application {
     private GLib.Settings settings;
     private int complete_working_duration;
     private int complete_break_duration; 
-    private int current_countdown_duration;   
+    private int current_countdown_duration;
+    private bool is_count_requested; //Timer Regulator   
     
     protected override void activate () {
         Hdy.init (); //Initializing LibHandy
@@ -28,6 +29,8 @@ public class Application : Gtk.Application {
         granite_settings.notify["prefers-color-scheme"].connect (() => {
             gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
         });
+        
+        is_count_requested = false;
         
         create_welcome_page (); //Adding UI Elements to the Welcome Grid
         create_stats_page ();
@@ -79,40 +82,94 @@ public class Application : Gtk.Application {
     
     private void start_working_countdown() {
         current_countdown_duration = settings.get_int("pref-working-duration");
-        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds", true);
+        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
         
+        is_count_requested = true;
+        start_count_bot(true);
+    }
+    
+    private void start_break_countdown() {
+        current_countdown_duration = settings.get_int("pref-break-duration");
+        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
+        
+        is_count_requested = true;   
+        start_count_bot(false);     
+    }
+    
+    private void start_count_bot(bool is_working) {
         Timeout.add(1000, () => {
             current_countdown_duration--;
-            if(current_countdown_duration > 0) {
+            if(current_countdown_duration > 0 && is_count_requested == true) {
                 //Update countdown label
-                continue_timer_countdown(current_countdown_duration);
+                continue_timer_countdown(current_countdown_duration, is_working);
                 return true;
+            } else if(is_count_requested == false) { //Otherwise, end_timer_countdown gets called twice             
+                return false;
             } else {
                 //Call end timer function
-                end_timer_countdown(current_countdown_duration);                
-                return false;
+                end_timer_countdown(current_countdown_duration, is_working);  
+                return false;                
             }
-        });
+        });        
     }
     
-    private void continue_timer_countdown(int time_left) {     
-        update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds", true);        
+    private void continue_timer_countdown(int time_left, bool is_working) {
+        if(is_working == true && countdown_type.label != "Working") {
+            countdown_type.label = "Working";
+            stop_working.label = "Stop Working";
+            stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration, true); });            
+        } else if(is_working == false && countdown_type.label != "Resting") {
+            countdown_type.label = "Resting";
+            stop_working.label = "End Break";
+            stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration, false); });            
+        }
+        
+        update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds");        
     }
     
-    private void end_timer_countdown(int time_left) {
+    private void end_timer_countdown(int time_left, bool is_working) {
+        is_count_requested = false;
+        
         if(time_left == 0) {
             //Auto Ended, Notify
             //Update total time by subtracting from stored time
-            update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds", true);
-        } 
+            update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds");
+            (is_working == true) ? complete_working_duration += settings.get_int("pref-working-duration") : complete_break_duration += settings.get_int("pref-break-duration"); //Update Number of Seconds Worked / Breaked
+        } else {
+            //Stop the Timer Loop
+            //is_count_requested = false;
+            (is_working == true) ? complete_working_duration += (settings.get_int("pref-working-duration") - time_left) : complete_break_duration += (settings.get_int("pref-break-duration") - time_left);
+        }
+        
+        stats_page.subtitle = "Work - " + seconds_human_parser(complete_working_duration) + " | Break - " + seconds_human_parser(complete_break_duration);
         
         grid.remove(grid_countdown);
         grid.attach(grid_stats, 0, 1);
         hdy_window.show_all();            
     }
     
-    private void update_timer_label(string label_data, bool is_working) {
+    private void update_timer_label(string label_data) {
         countdown_time.label = label_data;
+    }
+    
+    public string seconds_human_parser(int seconds) {
+        double day = seconds / (24 * 3600);
+        seconds %= (24 * 3600);
+        
+        double hour = seconds / 3600;
+        seconds %= 3600;
+        
+        double minutes = seconds / 60;
+        seconds %= 60;
+        
+        string human_time = "";
+        
+        (day == 0) ? human_time += "" : human_time += day.to_string() + "d ";
+        (hour == 0) ? human_time += "" : human_time += hour.to_string() + "h ";
+        (minutes == 0) ? human_time += "0m " : human_time += minutes.to_string() + "m ";
+        (seconds == 0) ? human_time += "0s": human_time += seconds.to_string() + "s";
+        
+        return human_time;
     }
     
     private void create_welcome_page() {
@@ -127,7 +184,7 @@ public class Application : Gtk.Application {
     }
     
     private void create_stats_page() {
-        stats_page = new Granite.Widgets.Welcome ("Stats", "Work - 19 Minutes | Break - 5 Minutes");
+        stats_page = new Granite.Widgets.Welcome ("Stats", "Work - 0h 3m 42s | Break - 0h 50m 42s");
         stats_page.append ("document-open-recent", "Continue Working", "Continue the Working Countdown");
         stats_page.append ("face-tired", "Take a Break", "Begin the Break Countdown");
         stats_page.append ("preferences-system", "Pomodoro Preferences", "Change Break and Working Duration");
@@ -144,7 +201,7 @@ public class Application : Gtk.Application {
         
         stop_working = new Gtk.Button.with_label("Stop Working");
         stop_working.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
-        stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration); });
+        stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration, true); });
         
         countdown_icon = new Gtk.Image () {
             gicon = new ThemedIcon ("document-open-recent"),
@@ -164,7 +221,7 @@ public class Application : Gtk.Application {
         countdown_type.get_style_context ().add_class (Granite.STYLE_CLASS_H2_LABEL);                        
         countdown_type.hexpand = true;        
                 
-        var grid_stats = new Gtk.Grid () {
+        var grid_status = new Gtk.Grid () {
             row_spacing = 5,
             hexpand = true,
             vexpand = true,
@@ -172,9 +229,9 @@ public class Application : Gtk.Application {
             halign = Gtk.Align.CENTER
         };
         
-        grid_stats.attach(countdown_icon, 0, 0);        
-        grid_stats.attach(countdown_time, 0, 1);
-        grid_stats.attach(countdown_type, 0, 2);
+        grid_status.attach(countdown_icon, 0, 0);        
+        grid_status.attach(countdown_time, 0, 1);
+        grid_status.attach(countdown_type, 0, 2);
         
         var grid_actions = new Gtk.ButtonBox (Gtk.Orientation.HORIZONTAL) {
             layout_style = Gtk.ButtonBoxStyle.CENTER,
@@ -192,13 +249,14 @@ public class Application : Gtk.Application {
             hexpand = true
         };
                
-        grid_countdown.attach(grid_stats, 0, 0);
+        grid_countdown.attach(grid_status, 0, 0);
         grid_countdown.attach(grid_actions, 0, 1);
     }
     
     private void initialize_hdy_window() {
         hdy_window = new Hdy.Window ();    
         hdy_window.application = this;
+        hdy_window.resizable = false;
         hdy_window.title = ("Ordne");
         hdy_window.add(window_handle);
         hdy_window.set_size_request (600, 530);
