@@ -16,7 +16,8 @@ public class Application : Gtk.Application {
     private int complete_working_duration;
     private int complete_break_duration; 
     private int current_countdown_duration;
-    private bool is_count_requested; //Timer Regulator   
+    private bool is_working;
+    private bool is_count_requested; //Timer Regulator
     
     protected override void activate () {
         Hdy.init (); //Initializing LibHandy
@@ -31,6 +32,7 @@ public class Application : Gtk.Application {
         });
         
         is_count_requested = false;
+        is_working = true;
         
         create_welcome_page (); //Adding UI Elements to the Welcome Grid
         create_stats_page ();
@@ -72,6 +74,14 @@ public class Application : Gtk.Application {
                 hdy_window.show_all();
                 break;
             }
+            
+            case 1: {
+                start_break_countdown();            
+                grid.remove(grid_stats);
+                grid.attach(grid_countdown, 0, 1);
+                hdy_window.show_all();
+                break;                
+            }
                     
             case 3: {
                 hdy_window.destroy();
@@ -84,37 +94,45 @@ public class Application : Gtk.Application {
         current_countdown_duration = settings.get_int("pref-working-duration");
         update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
         
+        is_working = true;
+        countdown_type.label = "Working";
+        stop_working.label = "Stop Working";       
+        
         is_count_requested = true;
-        start_count_bot(true);
+        start_count_bot();
     }
     
     private void start_break_countdown() {
         current_countdown_duration = settings.get_int("pref-break-duration");
         update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
+
+        is_working = false;
+        countdown_type.label = "Resting";
+        stop_working.label = "End Break";                
         
         is_count_requested = true;   
-        start_count_bot(false);     
+        start_count_bot();     
     }
     
-    private void start_count_bot(bool is_working) {
+    private void start_count_bot() {
         Timeout.add(1000, () => {
             current_countdown_duration--;
             if(current_countdown_duration > 0 && is_count_requested == true) {
                 //Update countdown label
-                continue_timer_countdown(current_countdown_duration, is_working);
+                continue_timer_countdown(current_countdown_duration);
                 return true;
             } else if(is_count_requested == false) { //Otherwise, end_timer_countdown gets called twice             
                 return false;
             } else {
                 //Call end timer function
-                end_timer_countdown(current_countdown_duration, is_working);  
+                end_timer_countdown();  
                 return false;                
             }
         });        
     }
     
-    private void continue_timer_countdown(int time_left, bool is_working) {
-        if(is_working == true && countdown_type.label != "Working") {
+    private void continue_timer_countdown(int time_left) {
+        /*if(is_working == true && countdown_type.label != "Working") {
             countdown_type.label = "Working";
             stop_working.label = "Stop Working";
             stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration, true); });            
@@ -122,23 +140,25 @@ public class Application : Gtk.Application {
             countdown_type.label = "Resting";
             stop_working.label = "End Break";
             stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration, false); });            
-        }
+        }*/
         
-        update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds");        
+        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");        
     }
     
-    private void end_timer_countdown(int time_left, bool is_working) {
+    private void end_timer_countdown() {
         is_count_requested = false;
         
-        if(time_left == 0) {
+        print("CALLED\n");
+        
+        if(current_countdown_duration == 0) {
             //Auto Ended, Notify
             //Update total time by subtracting from stored time
-            update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds");
+            update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
             (is_working == true) ? complete_working_duration += settings.get_int("pref-working-duration") : complete_break_duration += settings.get_int("pref-break-duration"); //Update Number of Seconds Worked / Breaked
         } else {
             //Stop the Timer Loop
             //is_count_requested = false;
-            (is_working == true) ? complete_working_duration += (settings.get_int("pref-working-duration") - time_left) : complete_break_duration += (settings.get_int("pref-break-duration") - time_left);
+            (is_working == true) ? complete_working_duration += (settings.get_int("pref-working-duration") - current_countdown_duration) : complete_break_duration += (settings.get_int("pref-break-duration") - current_countdown_duration);
         }
         
         stats_page.subtitle = "Work - " + seconds_human_parser(complete_working_duration) + " | Break - " + seconds_human_parser(complete_break_duration);
@@ -201,11 +221,12 @@ public class Application : Gtk.Application {
         
         stop_working = new Gtk.Button.with_label("Stop Working");
         stop_working.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
-        stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration, true); });
+        stop_working.clicked.connect(end_timer_countdown);       
         
         countdown_icon = new Gtk.Image () {
             gicon = new ThemedIcon ("document-open-recent"),
-            pixel_size = 100
+            pixel_size = 100,
+            hexpand = true
         };        
         
         countdown_time = new Gtk.Label("00:00 seconds");
