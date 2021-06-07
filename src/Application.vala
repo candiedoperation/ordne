@@ -8,11 +8,13 @@ public class Application : Gtk.Application {
     private Gtk.Grid grid_countdown;
     private Gtk.Grid grid;
     private Gtk.Label countdown_time;
+    private Gtk.Label countdown_type;    
     private Gtk.Image countdown_icon;
     private Hdy.WindowHandle window_handle;
     private Hdy.Window hdy_window;
-    private int working_duration;
-    private int break_duration;    
+    private int complete_working_duration;
+    private int complete_break_duration; 
+    private int current_countdown_duration;   
     
     protected override void activate () {
         Hdy.init (); //Initializing LibHandy
@@ -42,6 +44,7 @@ public class Application : Gtk.Application {
     private void on_welcome_action(int option) {
         switch(option) {
             case 0: {
+                start_working_countdown();
                 grid.remove(grid_welcome);
                 grid.attach(grid_countdown, 0, 1);
                 hdy_window.show_all();
@@ -69,12 +72,44 @@ public class Application : Gtk.Application {
                 break;
             }
         }        
-    }    
+    }
     
-    private void on_stop_working_request() {
+    private void start_working_countdown() {
+        current_countdown_duration = 20;
+        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
+        
+        Timeout.add(1000, () => {
+            current_countdown_duration--;
+            if(current_countdown_duration > 0) {
+                //Update countdown label
+                continue_timer_countdown(current_countdown_duration);
+                return true;
+            } else {
+                //Call end timer function
+                end_timer_countdown(current_countdown_duration);                
+                return false;
+            }
+        });
+    }
+    
+    private void continue_timer_countdown(int time_left) {     
+        update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds");        
+    }
+    
+    private void end_timer_countdown(int time_left) {
+        if(time_left == 0) {
+            //Auto Ended, Notify
+            //Update total time by subtracting from stored time
+            update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds");
+        } 
+        
         grid.remove(grid_countdown);
         grid.attach(grid_stats, 0, 1);
-        hdy_window.show_all();        
+        hdy_window.show_all();            
+    }
+    
+    private void update_timer_label(string label_data) {
+        countdown_time.label = label_data;
     }
     
     private void create_welcome_page() {
@@ -107,20 +142,28 @@ public class Application : Gtk.Application {
         
         stop_working = new Gtk.Button.with_label("Stop Working");
         stop_working.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
-        stop_working.clicked.connect(on_stop_working_request);
+        stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration); });
         
         countdown_icon = new Gtk.Image () {
             gicon = new ThemedIcon ("document-open-recent"),
             pixel_size = 100
         };        
         
-        countdown_time = new Gtk.Label("02:38 seconds");
-        countdown_time.set_halign(Gtk.Align.CENTER);
-        countdown_time.get_style_context ().add_class (Granite.STYLE_CLASS_H1_LABEL);
+        countdown_time = new Gtk.Label("00:00 seconds");
+        countdown_time.set_halign(Gtk.Align.CENTER);        
         countdown_time.hexpand = true;
+
+        unowned Gtk.StyleContext countdown_time_context = countdown_time.get_style_context ();
+        countdown_time_context.add_class (Granite.STYLE_CLASS_H1_LABEL);        
+        countdown_time_context.add_class (Granite.STYLE_CLASS_ACCENT);                
+        
+        countdown_type = new Gtk.Label("Working");
+        countdown_type.set_halign(Gtk.Align.CENTER);
+        countdown_type.get_style_context ().add_class (Granite.STYLE_CLASS_H2_LABEL);                        
+        countdown_type.hexpand = true;        
                 
         var grid_stats = new Gtk.Grid () {
-            row_spacing = 10,
+            row_spacing = 5,
             hexpand = true,
             vexpand = true,
             valign = Gtk.Align.CENTER,
@@ -129,6 +172,7 @@ public class Application : Gtk.Application {
         
         grid_stats.attach(countdown_icon, 0, 0);        
         grid_stats.attach(countdown_time, 0, 1);
+        grid_stats.attach(countdown_type, 0, 2);
         
         var grid_actions = new Gtk.ButtonBox (Gtk.Orientation.HORIZONTAL) {
             layout_style = Gtk.ButtonBoxStyle.CENTER,
