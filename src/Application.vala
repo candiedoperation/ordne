@@ -12,6 +12,7 @@ public class Application : Gtk.Application {
     private Gtk.Image countdown_icon;
     private Hdy.WindowHandle window_handle;
     private Hdy.Window hdy_window;
+    private GLib.Settings settings;
     private int complete_working_duration;
     private int complete_break_duration; 
     private int current_countdown_duration;   
@@ -21,9 +22,7 @@ public class Application : Gtk.Application {
     
         var granite_settings = Granite.Settings.get_default (); //For Auto Dark Mode Toggle
         var gtk_settings = Gtk.Settings.get_default (); //For Auto Dark Mode Toggle
-        var settings = new GLib.Settings ("com.github.candiedoperation.ordne");
-        
-        print("Working Duration: " + settings.get_int("pref-working-duration").to_string());    
+        settings = new GLib.Settings ("com.github.candiedoperation.ordne");    
         
         gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
         granite_settings.notify["prefers-color-scheme"].connect (() => {
@@ -79,8 +78,8 @@ public class Application : Gtk.Application {
     }
     
     private void start_working_countdown() {
-        current_countdown_duration = 20;
-        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
+        current_countdown_duration = settings.get_int("pref-working-duration");
+        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds", true);
         
         Timeout.add(1000, () => {
             current_countdown_duration--;
@@ -97,14 +96,14 @@ public class Application : Gtk.Application {
     }
     
     private void continue_timer_countdown(int time_left) {     
-        update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds");        
+        update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds", true);        
     }
     
     private void end_timer_countdown(int time_left) {
         if(time_left == 0) {
             //Auto Ended, Notify
             //Update total time by subtracting from stored time
-            update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds");
+            update_timer_label(Granite.DateTime.seconds_to_time(time_left) + " seconds", true);
         } 
         
         grid.remove(grid_countdown);
@@ -112,7 +111,7 @@ public class Application : Gtk.Application {
         hdy_window.show_all();            
     }
     
-    private void update_timer_label(string label_data) {
+    private void update_timer_label(string label_data, bool is_working) {
         countdown_time.label = label_data;
     }
     
@@ -202,7 +201,7 @@ public class Application : Gtk.Application {
         hdy_window.application = this;
         hdy_window.title = ("Ordne");
         hdy_window.add(window_handle);
-        hdy_window.set_size_request (600, 500);
+        hdy_window.set_size_request (600, 530);
         hdy_window.window_position = Gtk.WindowPosition.CENTER;        
     }
 

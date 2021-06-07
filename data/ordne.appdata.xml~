@@ -8,12 +8,14 @@
   <description>
     <p>Ordne. A simple Pomodoro Timer.</p>
     <p>Improves Work Productivity, Based on the Pomodoro Timer Technique</p>
-    <p>Integrates best with Elementary OS 6, Looks Awesome!</p>
+    <p>Integrates best, Looks Awesome!</p>
   </description>
+  <!-- Manadatory Elementary OS Guidelines -->
+  <developer_name>Atheesh Thirumalairajan</developer_name>
   <!-- For AppCenter Branding --->
   <custom>
     <value key="x-appcenter-color-primary">#603461</value>
     <value key="x-appcenter-color-primary-text">rgb(255, 255, 255)</value>
     <value key="x-appcenter-suggested-price">5</value>
-</custom>
+  </custom>
 </component>

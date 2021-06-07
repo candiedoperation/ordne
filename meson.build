@@ -42,3 +42,6 @@ foreach i : icon_sizes
         rename: meson.project_name() + '.svg'
     )
 endforeach
+
+meson.add_install_script('meson/post_install.py')
+subdir('data')
