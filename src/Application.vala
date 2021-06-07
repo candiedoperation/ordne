@@ -58,6 +58,23 @@ public class Application : Gtk.Application {
                 break;
             }
             
+            case 1: {
+                //ONLY FOR TESTING
+                var action_working = new SimpleAction ("action-working", null);
+                var action_break = new SimpleAction ("action-break", null);
+                
+                //action_working.activate.connect();
+                
+                var notification = new Notification ("Working Complete!");
+                notification.set_body ("Worked 1h 35m | Breaks 2h 45m");
+                notification.set_icon (new ThemedIcon ("process-completed"));
+                notification.add_button("Continue Working", "app.action-working");
+                notification.add_button("Continue Break", "app.action-break");
+                
+                send_notification ("com.github.candiedoperation.ordne", notification);
+                break;                
+            }
+            
             case 2: {
                 hdy_window.destroy();
                 break;
