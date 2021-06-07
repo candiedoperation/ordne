@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2021 Atheesh Thirumalairajan <candiedoperation@icloud.com> -->
 <component type="desktop">
-  <id>com.github.yourusername.yourrepositoryname</id>
+  <id>com.github.candiedoperation.ordne</id>
   <metadata_license>CC0</metadata_license>
-  <name>Your App's Name</name>
-  <summary>A Catchy Tagline</summary>
+  <name>Ordne</name>
+  <summary>A Simple Pomodoro Timer</summary>
   <description>
-    <p>A quick summary of your app's main selling points and features. Just a couple sentences per paragraph is best.</p>
+    <p>Ordne. A simple Pomodoro Timer.</p>
+    <p>Improves Work Productivity, Based on the Pomodoro Timer Technique</p>
+    <p>Integrates best with Elementary OS 6, Looks Awesome!</p>
   </description>
   <!-- For AppCenter Branding --->
   <custom>
