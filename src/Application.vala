@@ -21,6 +21,9 @@ public class Application : Gtk.Application {
     
         var granite_settings = Granite.Settings.get_default (); //For Auto Dark Mode Toggle
         var gtk_settings = Gtk.Settings.get_default (); //For Auto Dark Mode Toggle
+        var settings = new GLib.Settings ("com.github.candiedoperation.ordne");
+        
+        print("Working Duration: " + settings.get_int("pref-working-duration").to_string());    
         
         gtk_settings.gtk_application_prefer_dark_theme = granite_settings.prefers_color_scheme == Granite.Settings.ColorScheme.DARK;
         granite_settings.notify["prefers-color-scheme"].connect (() => {
@@ -61,6 +64,7 @@ public class Application : Gtk.Application {
     private void on_stats_action(int option) {
         switch(option) {
             case 0: {
+                start_working_countdown();            
                 grid.remove(grid_stats);
                 grid.attach(grid_countdown, 0, 1);
                 hdy_window.show_all();
@@ -115,7 +119,6 @@ public class Application : Gtk.Application {
     private void create_welcome_page() {
         welcome_page = new Granite.Widgets.Welcome ("Ordne", "A simple Pomodoro Timer.");
         welcome_page.append ("document-open-recent", "Start Working", "Begin the Working Countdown");
-        //welcome_page.append ("face-tired", "Take a Break", "Begin the Break Countdown");
         welcome_page.append ("preferences-system", "Pomodoro Preferences", "Change Break and Working Duration");
         welcome_page.append ("process-stop", "Close", "Close the Application");
         welcome_page.activated.connect (on_welcome_action);  
