@@ -23,7 +23,7 @@ Run `meson build` to configure the build environment.
     meson build --prefix=/usr
     cd build
 
-To install, use `ninja install`, then execute with `io.elementary.calculator`
+To install, use `ninja install`, then execute with `com.github.candiedoperation.ordne`
 
     sudo ninja install
     com.github.candiedoperation.ordne
