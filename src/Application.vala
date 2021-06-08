@@ -1,6 +1,7 @@
 public class Application : Gtk.Application {
     private Granite.Widgets.Welcome welcome_page;
     private Granite.Widgets.Welcome stats_page;
+    private Granite.Dialog preference_window;
     private Gtk.Button close_app;
     private Gtk.Button stop_working;    
     private Gtk.Grid grid_welcome;
@@ -52,26 +53,11 @@ public class Application : Gtk.Application {
         switch(option) {
             case 0: {
                 start_working_countdown();
-                grid.remove(grid_welcome);
-                grid.attach(grid_countdown, 0, 1);
-                hdy_window.show_all();
                 break;
             }
             
             case 1: {
-                //ONLY FOR TESTING
-                var action_working = new SimpleAction ("action-working", null);
-                var action_break = new SimpleAction ("action-break", null);
-                
-                //action_working.activate.connect();
-                
-                var notification = new Notification ("Working Complete!");
-                notification.set_body ("Worked 1h 35m | Breaks 2h 45m");
-                notification.set_icon (new ThemedIcon ("process-completed"));
-                notification.add_button("Continue Working", "app.action-working");
-                notification.add_button("Continue Break", "app.action-break");
-                
-                send_notification ("com.github.candiedoperation.ordne", notification);
+                create_prefs_window();                
                 break;                
             }
             
@@ -85,19 +71,18 @@ public class Application : Gtk.Application {
     private void on_stats_action(int option) {
         switch(option) {
             case 0: {
-                start_working_countdown();            
-                grid.remove(grid_stats);
-                grid.attach(grid_countdown, 0, 1);
-                hdy_window.show_all();
+                start_working_countdown();
                 break;
             }
             
             case 1: {
                 start_break_countdown();            
-                grid.remove(grid_stats);
-                grid.attach(grid_countdown, 0, 1);
-                hdy_window.show_all();
                 break;                
+            }
+            
+            case 2: {
+                create_prefs_window();                
+                break;
             }
                     
             case 3: {
@@ -108,6 +93,8 @@ public class Application : Gtk.Application {
     }
     
     private void start_working_countdown() {
+        withdraw_notification ("working-complete");    
+    
         current_countdown_duration = settings.get_int("pref-working-duration");
         update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
         
@@ -117,9 +104,16 @@ public class Application : Gtk.Application {
         
         is_count_requested = true;
         start_count_bot();
+        
+        grid.remove(grid_welcome);
+        grid.remove(grid_stats);
+        grid.attach(grid_countdown, 0, 1);
+        hdy_window.show_all();        
     }
     
     private void start_break_countdown() {
+        withdraw_notification ("working-complete");
+            
         current_countdown_duration = settings.get_int("pref-break-duration");
         update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
 
@@ -128,7 +122,12 @@ public class Application : Gtk.Application {
         stop_working.label = "End Break";                
         
         is_count_requested = true;   
-        start_count_bot();     
+        start_count_bot();
+        
+        grid.remove(grid_welcome);
+        grid.remove(grid_stats);
+        grid.attach(grid_countdown, 0, 1);
+        hdy_window.show_all();              
     }
     
     private void start_count_bot() {
@@ -148,30 +147,20 @@ public class Application : Gtk.Application {
         });        
     }
     
-    private void continue_timer_countdown(int time_left) {
-        /*if(is_working == true && countdown_type.label != "Working") {
-            countdown_type.label = "Working";
-            stop_working.label = "Stop Working";
-            stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration, true); });            
-        } else if(is_working == false && countdown_type.label != "Resting") {
-            countdown_type.label = "Resting";
-            stop_working.label = "End Break";
-            stop_working.clicked.connect(() => { end_timer_countdown(current_countdown_duration, false); });            
-        }*/
-        
+    private void continue_timer_countdown(int time_left) {        
         update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");        
     }
     
     private void end_timer_countdown() {
         is_count_requested = false;
         
-        print("CALLED\n");
-        
-        if(current_countdown_duration == 0) {
-            //Auto Ended, Notify
+        if(current_countdown_duration == 0) {            
             //Update total time by subtracting from stored time
             update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
             (is_working == true) ? complete_working_duration += settings.get_int("pref-working-duration") : complete_break_duration += settings.get_int("pref-break-duration"); //Update Number of Seconds Worked / Breaked
+            
+            //Auto Ended, Notify
+            ring_notification("Worked " + seconds_human_parser(complete_working_duration) + " | Break " + seconds_human_parser(complete_break_duration));            
         } else {
             //Stop the Timer Loop
             //is_count_requested = false;
@@ -187,6 +176,32 @@ public class Application : Gtk.Application {
     
     private void update_timer_label(string label_data) {
         countdown_time.label = label_data;
+    }
+    
+    private void ring_notification(string notify_body) {
+        var action_working = new SimpleAction ("action-working", null);
+        action_working.activate.connect(start_working_countdown);
+                                
+        var action_break = new SimpleAction ("action-break", null);
+        action_break.activate.connect(start_break_countdown); 
+                
+        add_action(action_working);
+        add_action(action_break);
+        
+        Notification notification;
+        (is_working == true) ? notification = new Notification ("Working Complete!") : notification = new Notification ("Break Complete!");
+        notification.set_body (notify_body);
+        notification.set_icon (new ThemedIcon ("process-completed"));
+        notification.add_button("Take a Break", "app.action-break");
+        notification.add_button("Continue Working", "app.action-working");
+        
+        if (settings.get_boolean("pref-ring-auto-dismiss") == false) {
+            notification.set_priority (NotificationPriority.URGENT);
+        } else {
+            notification.set_priority (NotificationPriority.NORMAL);
+        }        
+                    
+        send_notification ("working-complete", notification);        
     }
     
     public string seconds_human_parser(int seconds) {
@@ -289,6 +304,64 @@ public class Application : Gtk.Application {
                
         grid_countdown.attach(grid_status, 0, 0);
         grid_countdown.attach(grid_actions, 0, 1);
+    }
+    
+    private void create_prefs_window() {
+        var working_entry = new Gtk.Entry();
+        working_entry.max_length = 3;
+        
+        var break_entry = new Gtk.Entry();
+        break_entry.max_length = 3; 
+        
+        var notify_switch = new Gtk.Switch();
+        notify_switch.hexpand = false;
+        notify_switch.set_halign(Gtk.Align.START);
+        
+        var working_label = new Gtk.Label("Working Duration (in minutes)");
+        working_label.set_halign(Gtk.Align.START);
+        working_label.hexpand = true;
+        
+        var break_label = new Gtk.Label("Break Duration (in minutes)");
+        break_label.set_halign(Gtk.Align.START);
+        break_label.hexpand = true;
+        
+        var notify_label = new Gtk.Label("Auto Dismiss Notification");
+        notify_label.set_halign(Gtk.Align.START);
+        notify_label.hexpand = true;                        
+        
+        var grid_prefs = new Gtk.Grid () {
+            row_spacing = 12,
+            column_spacing = 10,
+            margin = 10,
+            vexpand = true
+        };
+        
+        grid_prefs.attach(working_label, 0, 1);
+        grid_prefs.attach(working_entry, 1, 1);
+        
+        grid_prefs.attach(break_label, 0, 2);
+        grid_prefs.attach(break_entry, 1, 2);  
+        
+        grid_prefs.attach(notify_label, 0, 3);
+        grid_prefs.attach(notify_switch, 1, 3, 1, 1); //Last two Params to prevent expanding to maintain grid uniformity
+        
+        preference_window = new Granite.Dialog ();
+        preference_window.transient_for = hdy_window;
+        preference_window.resizable = false;
+        preference_window.set_size_request (400, 350);
+        preference_window.get_content_area ().add (grid_prefs);
+        
+        var close_button = preference_window.add_button ("Close", Gtk.ResponseType.ACCEPT);        
+                        
+        preference_window.show_all();
+        
+        preference_window.response.connect ((response_id) => {
+            if (response_id == Gtk.ResponseType.ACCEPT) {
+                //Save the Data
+            }
+            
+            preference_window.destroy ();
+        });        
     }
     
     private void initialize_hdy_window() {
