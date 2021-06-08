@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Copyright 2021 Atheesh Thirumalairajan <candiedoperation@icloud.com> -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -16,6 +17,8 @@
    sodipodi:docname="16.svg"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
    viewBox="0 0 128 128">
+  <title
+     id="title4811">Ordne Icon 16x16</title>
   <sodipodi:namedview
      pagecolor="#ffffff"
      bordercolor="#666666"
@@ -30,7 +33,7 @@
      id="namedview44"
      showgrid="true"
      inkscape:zoom="41.7193"
-     inkscape:cx="8.2372027"
+     inkscape:cx="-2.3334445"
      inkscape:cy="8.0360286"
      inkscape:window-x="0"
      inkscape:window-y="30"
@@ -329,7 +332,22 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title>Ordne Icon 16x16</dc:title>
+        <dc:date>June 8, 2021</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Atheesh Thirumalairajan</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <dc:language>English (International)</dc:language>
+        <dc:description>Icon for the Ordne Application</dc:description>
+        <cc:license
+           rdf:resource="https://raw.githubusercontent.com/candiedoperation/ordne/master/COPYING" />
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>Atheesh Thirumalairajan (https://github.com/candiedoperation)</dc:title>
+          </cc:Agent>
+        </dc:contributor>
       </cc:Work>
     </rdf:RDF>
   </metadata>

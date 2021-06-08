@@ -3,30 +3,30 @@
 <component type="desktop">
   <id>com.github.candiedoperation.ordne</id>
   <launchable type="desktop-id">com.github.candiedoperation.ordne.desktop</launchable>  
-  <metadata_license>CC0</metadata_license>
+  <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0+</project_license>  
   <name>Ordne</name>
   <summary>A Simple Pomodoro Timer</summary>
   <description>
-    <p>Ordne. A simple Pomodoro Timer. Manage Work and Break Hours, Improve Productivity, Stay Focused.</p>
+    <p>A simple Pomodoro Timer. Manage Work and Break Hours, Improve Productivity, Stay Focused.</p>
   </description>
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-light-1.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-light-2.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-light-3.png</image>
     </screenshot> 
-    <screenshot type="default">
+    <screenshot>
       <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-dark-1.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-dark-2.png</image>
     </screenshot>
-    <screenshot type="default">
+    <screenshot>
       <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-dark-3.png</image>
     </screenshot>               
   </screenshots>  
@@ -65,8 +65,8 @@
   </content_rating>
   <!-- For AppCenter Branding --->
   <custom>
-    <value key="x-appcenter-color-primary">#603461</value>
-    <value key="x-appcenter-color-primary-text">rgb(255, 255, 255)</value>
+    <value key="x-appcenter-color-primary">#e4c6fa</value>
+    <value key="x-appcenter-color-primary-text">rgb(0, 0, 0)</value>
     <value key="x-appcenter-suggested-price">5</value>
   </custom>
 </component>
