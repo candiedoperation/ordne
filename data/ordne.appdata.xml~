@@ -12,23 +12,11 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-light-1.png</image>
+      <image>https://raw.githubusercontent.com/elementary/screenshot/master/data/screenshot.png</image>
     </screenshot>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-light-2.png</image>
+      <image>https://raw.githubusercontent.com/elementary/screenshot/master/data/screenshot2.png</image>
     </screenshot>
-    <screenshot type="default">
-      <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-light-3.png</image>
-    </screenshot> 
-    <screenshot type="default">
-      <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-dark-1.png</image>
-    </screenshot>
-    <screenshot type="default">
-      <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-dark-2.png</image>
-    </screenshot>
-    <screenshot type="default">
-      <image>https://raw.githubusercontent.com/candiedoperation/ordne/master/data/screenshots/ordne-dark-3.png</image>
-    </screenshot>               
   </screenshots>  
   <!-- Manadatory Elementary OS Guidelines -->
   <url type="homepage">https://candiedoperation.github.io/ordne</url>
