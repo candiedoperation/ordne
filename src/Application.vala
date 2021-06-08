@@ -67,7 +67,7 @@ public class Application : Gtk.Application {
         create_countdown_page ();
                                    
         grid = new Gtk.Grid ();
-        grid.attach(grid_welcome, 0, 1); //grid_welcome intialally
+        grid.attach (grid_welcome, 0, 1); //grid_welcome intialally
         
         window_handle = new Hdy.WindowHandle ();
         window_handle.add (grid);
@@ -394,7 +394,7 @@ public class Application : Gtk.Application {
         hdy_window.application = this;
         hdy_window.resizable = false;
         hdy_window.title = ("Ordne");
-        hdy_window.add(window_handle);
+        hdy_window.add (window_handle);
         hdy_window.set_size_request (600, 530);
         hdy_window.window_position = Gtk.WindowPosition.CENTER;        
     }
