@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2021 Atheesh Thirumalairajan <candiedoperation@icloud.com> -->
 <schemalist>
   <schema path="/com/github/candiedoperation/ordne/" id="com.github.candiedoperation.ordne">
     <key name="pref-working-duration" type="s">
