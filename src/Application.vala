@@ -354,15 +354,10 @@ public class Application : Gtk.Application {
         preference_window.set_size_request (400, 350);
         preference_window.get_content_area ().add (grid_prefs);
         
-        var close_button = preference_window.add_button ("Close", Gtk.ResponseType.ACCEPT);        
-                        
+        preference_window.add_button ("Close", Gtk.ResponseType.ACCEPT);        
         preference_window.show_all();
         
         preference_window.response.connect ((response_id) => {
-            if (response_id == Gtk.ResponseType.ACCEPT) {
-                //Save the Data
-            }
-            
             preference_window.destroy ();
         });        
     }
