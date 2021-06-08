@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema path="/com/github/candiedoperation/ordne/" id="com.github.candiedoperation.ordne">
-    <key name="pref-working-duration" type="i">
-      <default>30</default>
+    <key name="pref-working-duration" type="s">
+      <default>"25"</default>
       <summary>Working duration</summary>
       <description>User Preffered Working Duration</description>
     </key>
-    <key name="pref-break-duration" type="i">
-      <default>15</default>
+    <key name="pref-break-duration" type="s">
+      <default>"5"</default>
       <summary>Break duration</summary>
       <description>User Preffered Break Duration</description>
-    </key>    
+    </key>
+    <key name="pref-ring-auto-dismiss" type="b">
+      <default>false</default>
+      <summary>Auto Dismiss Notifications</summary>
+      <description>Notification Priority URGENT Setting</description>
+    </key>     
   </schema>
 </schemalist>

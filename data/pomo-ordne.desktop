@@ -8,3 +8,4 @@ Icon=com.github.candiedoperation.ordne
 Terminal=false
 Type=Application
 Keywords=Timer;Pomodoro;
+X-GNOME-UsesNotifications=true

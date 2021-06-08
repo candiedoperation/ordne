@@ -95,8 +95,8 @@ public class Application : Gtk.Application {
     private void start_working_countdown() {
         withdraw_notification ("working-complete");    
     
-        current_countdown_duration = settings.get_int("pref-working-duration");
-        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
+        current_countdown_duration = (int.parse(settings.get_string("pref-working-duration")) * 60);
+        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration));
         
         is_working = true;
         countdown_type.label = "Working";
@@ -114,8 +114,8 @@ public class Application : Gtk.Application {
     private void start_break_countdown() {
         withdraw_notification ("working-complete");
             
-        current_countdown_duration = settings.get_int("pref-break-duration");
-        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
+        current_countdown_duration = (int.parse(settings.get_string("pref-break-duration")) * 60);
+        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration));
 
         is_working = false;
         countdown_type.label = "Resting";
@@ -148,7 +148,7 @@ public class Application : Gtk.Application {
     }
     
     private void continue_timer_countdown(int time_left) {        
-        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");        
+        update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration));        
     }
     
     private void end_timer_countdown() {
@@ -156,15 +156,15 @@ public class Application : Gtk.Application {
         
         if(current_countdown_duration == 0) {            
             //Update total time by subtracting from stored time
-            update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration) + " seconds");
-            (is_working == true) ? complete_working_duration += settings.get_int("pref-working-duration") : complete_break_duration += settings.get_int("pref-break-duration"); //Update Number of Seconds Worked / Breaked
+            update_timer_label(Granite.DateTime.seconds_to_time(current_countdown_duration));
+            (is_working == true) ? complete_working_duration += (int.parse(settings.get_string("pref-working-duration")) * 60) : complete_break_duration += (int.parse(settings.get_string("pref-break-duration")) * 60); //Update Number of Seconds Worked / Breaked
             
             //Auto Ended, Notify
             ring_notification("Worked " + seconds_human_parser(complete_working_duration) + " | Break " + seconds_human_parser(complete_break_duration));            
         } else {
             //Stop the Timer Loop
             //is_count_requested = false;
-            (is_working == true) ? complete_working_duration += (settings.get_int("pref-working-duration") - current_countdown_duration) : complete_break_duration += (settings.get_int("pref-break-duration") - current_countdown_duration);
+            (is_working == true) ? complete_working_duration += ((int.parse(settings.get_string("pref-working-duration")) * 60) - current_countdown_duration) : complete_break_duration += ((int.parse(settings.get_string("pref-break-duration")) * 60) - current_countdown_duration);
         }
         
         stats_page.subtitle = "Work - " + seconds_human_parser(complete_working_duration) + " | Break - " + seconds_human_parser(complete_break_duration);
@@ -175,7 +175,7 @@ public class Application : Gtk.Application {
     }
     
     private void update_timer_label(string label_data) {
-        countdown_time.label = label_data;
+        countdown_time.label = label_data + " remaining";
     }
     
     private void ring_notification(string notify_body) {
@@ -309,13 +309,16 @@ public class Application : Gtk.Application {
     private void create_prefs_window() {
         var working_entry = new Gtk.Entry();
         working_entry.max_length = 3;
+        settings.bind ("pref-working-duration", working_entry, "text", GLib.SettingsBindFlags.DEFAULT);        
         
         var break_entry = new Gtk.Entry();
-        break_entry.max_length = 3; 
+        break_entry.max_length = 3;
+        settings.bind ("pref-break-duration", break_entry, "text", GLib.SettingsBindFlags.DEFAULT);         
         
         var notify_switch = new Gtk.Switch();
         notify_switch.hexpand = false;
         notify_switch.set_halign(Gtk.Align.START);
+        settings.bind ("pref-ring-auto-dismiss", notify_switch, "active", GLib.SettingsBindFlags.DEFAULT);        
         
         var working_label = new Gtk.Label("Working Duration (in minutes)");
         working_label.set_halign(Gtk.Align.START);
