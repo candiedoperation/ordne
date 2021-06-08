@@ -1,0 +1,7 @@
+src/Application
+build/*
+data/128.svg
+data/16.svg
+data/32.svg
+data/48.svg
+data/64.svg
