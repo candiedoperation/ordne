@@ -14,6 +14,8 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    
+    Authored By: Atheesh Thirumalairajan <candiedoperation@icloud.com>
 */
 
 public class Application : Gtk.Application {
@@ -37,6 +39,13 @@ public class Application : Gtk.Application {
     private int current_countdown_duration;
     private bool is_working;
     private bool is_count_requested; //Timer Regulator
+    
+    public Application () {
+        Object (
+            application_id: "com.github.candiedoperation.ordne",
+            flags: ApplicationFlags.FLAGS_NONE
+        );
+    }    
     
     protected override void activate () {
         Hdy.init (); //Initializing LibHandy
