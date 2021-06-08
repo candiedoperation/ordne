@@ -218,7 +218,7 @@ public class Application : Gtk.Application {
         Notification notification;
         (is_working == true) ? notification = new Notification ("Working Complete!") : notification = new Notification ("Break Complete!");
         notification.set_body (notify_body);
-        notification.set_icon (new ThemedIcon ("process-completed"));
+        //notification.set_icon (new ThemedIcon ("process-completed")); //Small Tick Fails to display Icon with FlatPak
         notification.add_button("Take a Break", "app.action-break");
         notification.add_button("Continue Working", "app.action-working");
         
