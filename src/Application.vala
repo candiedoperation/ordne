@@ -202,7 +202,7 @@ public class Application : Gtk.Application {
     }
     
     private void update_timer_label (string label_data) {
-        countdown_time.label = GLib.Markup.printf_escaped ("<span font_features='tnum'>%s</span>", label_data + " remaining");
+        countdown_time.label = GLib.Markup.printf_escaped ("<span font_features='tnum'>%s</span>", label_data + " remaining"); //Fixes Issue 13
     }
     
     private void ring_notification (string notify_body) {
