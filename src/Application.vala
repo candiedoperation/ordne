@@ -34,6 +34,9 @@ public class Application : Gtk.Application {
     private Hdy.WindowHandle window_handle;
     private Hdy.Window hdy_window;
     private GLib.Settings settings;
+    private uint32 end_beep_id;
+    private Canberra.Context context;
+    private Canberra.Proplist props;    
     private int complete_working_duration;
     private int complete_break_duration; 
     private int current_countdown_duration;
@@ -61,6 +64,14 @@ public class Application : Gtk.Application {
         
         is_count_requested = false;
         is_working = true;
+        
+        Canberra.Context.create (out context);
+        Canberra.Proplist.create (out props);
+
+        props.sets (Canberra.PROP_EVENT_DESCRIPTION, "Ordne Ended");
+        props.sets (Canberra.PROP_EVENT_ID, "alarm-clock-elapsed");
+        props.sets (Canberra.PROP_CANBERRA_CACHE_CONTROL, "permanent");
+        props.sets (Canberra.PROP_MEDIA_ROLE, "event");        
         
         create_welcome_page (); //Adding UI Elements to the Welcome Grid
         create_stats_page ();
@@ -120,6 +131,7 @@ public class Application : Gtk.Application {
     }
     
     private void start_working_countdown () {
+        stop_beep_if_playing ();
         withdraw_notification ("working-complete");    
     
         current_countdown_duration = (int.parse(settings.get_string("pref-working-duration")) * 60);
@@ -139,6 +151,7 @@ public class Application : Gtk.Application {
     }
     
     private void start_break_countdown () {
+        stop_beep_if_playing ();
         withdraw_notification ("working-complete");
             
         current_countdown_duration = (int.parse(settings.get_string("pref-break-duration")) * 60);
@@ -228,8 +241,25 @@ public class Application : Gtk.Application {
             notification.set_priority (NotificationPriority.NORMAL);
         }        
                     
-        send_notification ("working-complete", notification);        
+        send_notification ("working-complete", notification);
+        play_beep();        
     }
+    
+    public void play_beep () {
+        stop_beep_if_playing ();
+
+        end_beep_id =  Random.next_int ();
+        context.play_full (end_beep_id, props, null);
+    }
+
+    public void stop_beep_if_playing () {
+        bool is_beep_playing;
+        
+        context.playing (end_beep_id, out is_beep_playing);
+        if (is_beep_playing) {
+            context.cancel (end_beep_id);
+        }
+    }    
     
     public string seconds_human_parser (int seconds) {
         double day = seconds / (24 * 3600);
