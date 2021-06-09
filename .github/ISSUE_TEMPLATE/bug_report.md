@@ -18,14 +18,16 @@ A clear and concise description of what the bug is.
 4. See error
 
 ## Expected Behavior
-A clear and concise description of what you expected to happen.
+A clear and concise description of what you expected to happen. 
 
 ## Screenshots
-If applicable, add screenshots to help explain your problem.
-
-## Platform Information
- - OS: [elementary OS]
- - Version [Odin]
+<!-- If applicable, add screenshots to help explain your problem. -->
+_None_
 
 ## Application Logs
-Add any other context about the problem here.
+<!-- You can attach Application Logs here, if any -->
+_None_
+
+## Platform Information
+<!-- Add Information Related to your Operating System, Its version and Minimal Hardware Information  -->
+ - Operating System: Elementary OS 6
