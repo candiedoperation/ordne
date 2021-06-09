@@ -51,6 +51,11 @@ public class Application : Gtk.Application {
     }    
     
     protected override void activate () {
+        if (get_windows () != null) {
+            get_windows ().data.present (); // present window if app is already running
+            return;
+        }
+                    
         Hdy.init (); //Initializing LibHandy
     
         var granite_settings = Granite.Settings.get_default (); //For Auto Dark Mode Toggle
