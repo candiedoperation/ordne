@@ -27,6 +27,12 @@ finish-args:
 # If we had external dependencies that weren't included in our SDK, we would list
 # them here.
 modules:
+  - name: libcanberra
+    sources:
+      - type: archive
+        url: https://launchpad.net/ubuntu/+archive/primary/+sourcefiles/libcanberra/0.30-7ubuntu2/libcanberra_0.30.orig.tar.xz
+        sha256: c2b671e67e0c288a69fc33dc1b6f1b534d07882c2aceed37004bf48c601afa72
+
   - name: ordne
     buildsystem: meson
     sources:
