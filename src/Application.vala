@@ -202,7 +202,7 @@ public class Application : Gtk.Application {
     }
     
     private void update_timer_label (string label_data) {
-        countdown_time.label = label_data + " remaining";
+        countdown_time.label = GLib.Markup.printf_escaped ("<span font_features='tnum'>%s</span>", label_data + " remaining");
     }
     
     private void ring_notification (string notify_body) {
@@ -291,6 +291,7 @@ public class Application : Gtk.Application {
         countdown_time = new Gtk.Label ("00:00 seconds");
         countdown_time.set_halign (Gtk.Align.CENTER);        
         countdown_time.hexpand = true;
+        countdown_time.use_markup = true;
 
         unowned Gtk.StyleContext countdown_time_context = countdown_time.get_style_context ();
         countdown_time_context.add_class (Granite.STYLE_CLASS_H1_LABEL);        
