@@ -67,6 +67,5 @@
   <custom>
     <value key="x-appcenter-color-primary">#e4c6fa</value>
     <value key="x-appcenter-color-primary-text">rgb(0, 0, 0)</value>
-    <value key="x-appcenter-suggested-price">5</value>
   </custom>
 </component>
