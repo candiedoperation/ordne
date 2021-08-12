@@ -14,6 +14,7 @@ You'll need the following dependencies:
 * gtk+-3.0
 * granite
 * libhandy-1
+* libcanberra
 * valac
 
 Above Dependencies get auto installed on `sudo apt-get install elementary-sdk`
