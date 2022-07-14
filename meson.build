@@ -1,32 +1,36 @@
-# project name and programming language
-project('com.github.candiedoperation.ordne', 'vala', 'c')
+# Project name, programming language and version
+project (
+    'com.github.candiedoperation.ordne',
+    'c', 'vala',
+    version: '1.0.2'
+)
 
-# Create a new executable, list the files we want to compile, list the dependencies we need, and install
+# Translation module
+i18n = import ('i18n')
+
+# Project arguments
+add_project_arguments (
+    '-DGETTEXT_PACKAGE="@0@"'.format (meson.project_name ()),
+    language: 'c'
+)
+
+# Listing dependencies
+dependencies = [
+    dependency ('gtk+-3.0'),
+    dependency ('granite'),
+    dependency ('libhandy-1'),
+    dependency ('libcanberra')
+]
+
+# Define executable
 executable(
-    meson.project_name(),
+    meson.project_name (),
     'src/Application.vala',
-    dependencies: [
-        dependency('gtk+-3.0'),
-        dependency('granite'),
-        dependency('libhandy-1'),
-        dependency('libcanberra')
-    ],
+    dependencies: dependencies,
     install: true
 )
 
-# Install our .desktop file so the Applications Menu will see it
-install_data(
-    join_paths('data', 'pomo-ordne.desktop'),
-    install_dir: join_paths(get_option('datadir'), 'applications'),
-    rename: meson.project_name() + '.desktop'
-)
+subdir ('data')
+subdir ('po')
 
-# Install our .appdata.xml file so AppCenter will see it
-install_data(
-    join_paths('data', 'ordne.appdata.xml'),
-    install_dir: join_paths(get_option('datadir'), 'metainfo'),
-    rename: meson.project_name() + '.appdata.xml'
-)
-
-meson.add_install_script('meson/post_install.py')
-subdir('data')
+meson.add_install_script ('meson/post_install.py')

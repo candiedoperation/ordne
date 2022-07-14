@@ -143,8 +143,8 @@ public class Application : Gtk.Application {
         update_timer_label (Granite.DateTime.seconds_to_time(current_countdown_duration));
         
         is_working = true;
-        countdown_type.label = "Working";
-        stop_working.label = "Stop Working";       
+        countdown_type.label = _("Working");
+        stop_working.label = _("Stop Working");       
         
         is_count_requested = true;
         start_count_bot ();
@@ -163,8 +163,8 @@ public class Application : Gtk.Application {
         update_timer_label (Granite.DateTime.seconds_to_time(current_countdown_duration));
 
         is_working = false;
-        countdown_type.label = "Resting";
-        stop_working.label = "End Break";                
+        countdown_type.label = _("Resting");
+        stop_working.label = _("End Break");                
         
         is_count_requested = true;   
         start_count_bot ();
@@ -205,14 +205,16 @@ public class Application : Gtk.Application {
             (is_working == true) ? complete_working_duration += (int.parse (settings.get_string ("pref-working-duration")) * 60) : complete_break_duration += (int.parse (settings.get_string ("pref-break-duration")) * 60); //Update Number of Seconds Worked / Breaked
             
             //Auto Ended, Notify
-            ring_notification("Worked " + seconds_human_parser (complete_working_duration) + " | Break " + seconds_human_parser (complete_break_duration));            
+            // TRANSLATORS: %s stands for time passed when working and taking breaks
+            ring_notification(_("Worked %s | Break %s").printf(seconds_human_parser (complete_working_duration), seconds_human_parser (complete_break_duration)));            
         } else {
             //Stop the Timer Loop
             //is_count_requested = false;
             (is_working == true) ? complete_working_duration += ((int.parse (settings.get_string ("pref-working-duration")) * 60) - current_countdown_duration) : complete_break_duration += ((int.parse (settings.get_string ("pref-break-duration")) * 60) - current_countdown_duration);
         }
         
-        stats_page.subtitle = "Work - " + seconds_human_parser (complete_working_duration) + " | Break - " + seconds_human_parser (complete_break_duration);
+        // TRANSLATORS: %s stands for time passed when working and taking breaks
+        stats_page.subtitle = _("Work - %s | Break - %s").printf(seconds_human_parser (complete_working_duration), seconds_human_parser (complete_break_duration));
         
         grid.remove (grid_countdown);
         grid.attach (grid_stats, 0, 1);
@@ -220,7 +222,7 @@ public class Application : Gtk.Application {
     }
     
     private void update_timer_label (string label_data) {
-        countdown_time.label = GLib.Markup.printf_escaped ("<span font_features='tnum'>%s</span>", label_data + " remaining"); //Fixes Issue 13
+        countdown_time.label = GLib.Markup.printf_escaped ("<span font_features='tnum'>%s</span>", _("%s remaining").printf(label_data)); //Fixes Issue 13
     }
     
     private void ring_notification (string notify_body) {
@@ -234,11 +236,11 @@ public class Application : Gtk.Application {
         add_action (action_break);
         
         Notification notification;
-        (is_working == true) ? notification = new Notification ("Working Complete!") : notification = new Notification ("Break Complete!");
+        (is_working == true) ? notification = new Notification (_("Working Complete!")) : notification = new Notification (_("Break Complete!"));
         notification.set_body (notify_body);
         //notification.set_icon (new ThemedIcon ("process-completed")); //Small Tick Fails to display Icon with FlatPak
-        notification.add_button ("Take a Break", "app.action-break");
-        notification.add_button ("Continue Working", "app.action-working");
+        notification.add_button (_("Take a Break"), "app.action-break");
+        notification.add_button (_("Continue Working"), "app.action-working");
         
         if (settings.get_boolean ("pref-ring-auto-dismiss") == false) {
             notification.set_priority (NotificationPriority.URGENT);
@@ -278,19 +280,23 @@ public class Application : Gtk.Application {
         
         string human_time = "";
         
-        (day == 0) ? human_time += "" : human_time += day.to_string () + "d ";
-        (hour == 0) ? human_time += "" : human_time += hour.to_string () + "h ";
-        (minutes == 0) ? human_time += "0m " : human_time += minutes.to_string () + "m ";
-        (seconds == 0) ? human_time += "0s": human_time += seconds.to_string () + "s";
+        // TRANSLATORS: Days unit
+        (day == 0) ? human_time += "" : _("%s d").printf(human_time += day.to_string ()) + " ";
+        // TRANSLATORS: Hours unit
+        (hour == 0) ? human_time += "" : _("%s h").printf(human_time += hour.to_string ()) + " ";
+        // TRANSLATORS: Minutes unit
+        (minutes == 0) ? human_time += _("%s m").printf("0") + " " : _("%s m").printf(human_time += minutes.to_string ()) + " ";
+        // TRANSLATORS: Seconds unit 
+        (seconds == 0) ? human_time += _("%s s").printf("0") : _("%s s").printf(human_time += seconds.to_string ());
         
         return human_time;
     }
     
     private void create_welcome_page () {
-        welcome_page = new Granite.Widgets.Welcome ("Ordne", "A simple Pomodoro Timer.");
-        welcome_page.append ("document-open-recent", "Start Working", "Begin the Working Countdown");
-        welcome_page.append ("preferences-system", "Pomodoro Preferences", "Change Break and Working Duration");
-        welcome_page.append ("process-stop", "Close", "Close the Application");
+        welcome_page = new Granite.Widgets.Welcome ("Ordne", _("A simple Pomodoro Timer."));
+        welcome_page.append ("document-open-recent", _("Start Working"), _("Begin the Working Countdown"));
+        welcome_page.append ("preferences-system", _("Pomodoro Preferences"), _("Change Break and Working Duration"));
+        welcome_page.append ("process-stop", _("Close"), _("Close the Application"));
         welcome_page.activated.connect (on_welcome_action);  
         
         grid_welcome = new Gtk.Grid ();
@@ -298,11 +304,11 @@ public class Application : Gtk.Application {
     }
     
     private void create_stats_page () {
-        stats_page = new Granite.Widgets.Welcome ("Stats", "Work - 0m 0s | Break - 0m 0s");
-        stats_page.append ("document-open-recent", "Continue Working", "Continue the Working Countdown");
-        stats_page.append ("face-tired", "Take a Break", "Begin the Break Countdown");
-        stats_page.append ("preferences-system", "Pomodoro Preferences", "Change Break and Working Duration");
-        stats_page.append ("process-stop", "Close", "Close the Application");
+        stats_page = new Granite.Widgets.Welcome (_("Stats"), _("Work - %s | Break - %s").printf("0m 0s", "0m 0s"));
+        stats_page.append ("document-open-recent", _("Continue Working"), _("Continue the Working Countdown"));
+        stats_page.append ("face-tired", _("Take a Break"), _("Begin the Break Countdown"));
+        stats_page.append ("preferences-system", _("Pomodoro Preferences"), _("Change Break and Working Duration"));
+        stats_page.append ("process-stop", _("Close"), _("Close the Application"));
         stats_page.activated.connect (on_stats_action); 
         
         grid_stats = new Gtk.Grid ();
@@ -310,10 +316,10 @@ public class Application : Gtk.Application {
     }
     
     private void create_countdown_page () {
-        close_app = new Gtk.Button.with_label ("Close");
+        close_app = new Gtk.Button.with_label (_("Close"));
         close_app.clicked.connect(() => { hdy_window.destroy (); });
         
-        stop_working = new Gtk.Button.with_label ("Stop Working");
+        stop_working = new Gtk.Button.with_label (_("Stop Working"));
         stop_working.get_style_context ().add_class (Gtk.STYLE_CLASS_DESTRUCTIVE_ACTION);
         stop_working.clicked.connect (end_timer_countdown);       
         
@@ -323,7 +329,7 @@ public class Application : Gtk.Application {
             hexpand = true
         };        
         
-        countdown_time = new Gtk.Label ("00:00 seconds");
+        countdown_time = new Gtk.Label (_("%s seconds").printf("00:00"));
         countdown_time.set_halign (Gtk.Align.CENTER);        
         countdown_time.hexpand = true;
         countdown_time.use_markup = true;
@@ -332,7 +338,7 @@ public class Application : Gtk.Application {
         countdown_time_context.add_class (Granite.STYLE_CLASS_H1_LABEL);        
         countdown_time_context.add_class (Granite.STYLE_CLASS_ACCENT);                
         
-        countdown_type = new Gtk.Label ("Working");
+        countdown_type = new Gtk.Label (_("Working"));
         countdown_type.set_halign (Gtk.Align.CENTER);
         countdown_type.get_style_context ().add_class (Granite.STYLE_CLASS_H2_LABEL);                        
         countdown_type.hexpand = true;        
@@ -383,15 +389,15 @@ public class Application : Gtk.Application {
         notify_switch.set_halign(Gtk.Align.START);
         settings.bind ("pref-ring-auto-dismiss", notify_switch, "active", GLib.SettingsBindFlags.DEFAULT);        
         
-        var working_label = new Gtk.Label ("Working Duration (in minutes)");
+        var working_label = new Gtk.Label (_("Working Duration (in minutes)"));
         working_label.set_halign (Gtk.Align.START);
         working_label.hexpand = true;
         
-        var break_label = new Gtk.Label ("Break Duration (in minutes)");
+        var break_label = new Gtk.Label (_("Break Duration (in minutes)"));
         break_label.set_halign (Gtk.Align.START);
         break_label.hexpand = true;
         
-        var notify_label = new Gtk.Label ("Auto Dismiss Notification");
+        var notify_label = new Gtk.Label (_("Auto Dismiss Notification"));
         notify_label.set_halign (Gtk.Align.START);
         notify_label.hexpand = true;                        
         
@@ -417,7 +423,7 @@ public class Application : Gtk.Application {
         preference_window.set_size_request (400, 350);
         preference_window.get_content_area ().add (grid_prefs);
         
-        preference_window.add_button ("Close", Gtk.ResponseType.ACCEPT);        
+        preference_window.add_button (_("Close"), Gtk.ResponseType.ACCEPT);        
         preference_window.show_all ();
         
         preference_window.response.connect ((response_id) => {

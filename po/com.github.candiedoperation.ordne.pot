@@ -1,0 +1,149 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the com.github.candiedoperation.ordne package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: com.github.candiedoperation.ordne\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-11-30 22:15+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/Application.vala:146 src/Application.vala:341
+msgid "Working"
+msgstr ""
+
+#: src/Application.vala:147 src/Application.vala:322
+msgid "Stop Working"
+msgstr ""
+
+#: src/Application.vala:166
+msgid "Resting"
+msgstr ""
+
+#: src/Application.vala:167
+msgid "End Break"
+msgstr ""
+
+#. TRANSLATORS: %s stands for time passed when working and taking breaks
+#: src/Application.vala:209
+#, c-format
+msgid "Worked %s | Break %s"
+msgstr ""
+
+#. TRANSLATORS: %s stands for time passed when working and taking breaks
+#: src/Application.vala:217 src/Application.vala:307
+#, c-format
+msgid "Work - %s | Break - %s"
+msgstr ""
+
+#: src/Application.vala:225
+#, c-format
+msgid "%s remaining"
+msgstr ""
+
+#: src/Application.vala:239
+msgid "Working Complete!"
+msgstr ""
+
+#: src/Application.vala:239
+msgid "Break Complete!"
+msgstr ""
+
+#: src/Application.vala:242 src/Application.vala:309
+msgid "Take a Break"
+msgstr ""
+
+#: src/Application.vala:243 src/Application.vala:308
+msgid "Continue Working"
+msgstr ""
+
+#. TRANSLATORS: Days unit
+#: src/Application.vala:284
+#, c-format
+msgid "%s d"
+msgstr ""
+
+#. TRANSLATORS: Hours unit
+#: src/Application.vala:286
+#, c-format
+msgid "%s h"
+msgstr ""
+
+#. TRANSLATORS: Minutes unit
+#: src/Application.vala:288
+#, c-format
+msgid "%s m"
+msgstr ""
+
+#. TRANSLATORS: Seconds unit
+#: src/Application.vala:290
+#, c-format
+msgid "%s s"
+msgstr ""
+
+#: src/Application.vala:296
+msgid "A simple Pomodoro Timer."
+msgstr ""
+
+#: src/Application.vala:297
+msgid "Start Working"
+msgstr ""
+
+#: src/Application.vala:297
+msgid "Begin the Working Countdown"
+msgstr ""
+
+#: src/Application.vala:298 src/Application.vala:310
+msgid "Pomodoro Preferences"
+msgstr ""
+
+#: src/Application.vala:298 src/Application.vala:310
+msgid "Change Break and Working Duration"
+msgstr ""
+
+#: src/Application.vala:299 src/Application.vala:311 src/Application.vala:319
+#: src/Application.vala:426
+msgid "Close"
+msgstr ""
+
+#: src/Application.vala:299 src/Application.vala:311
+msgid "Close the Application"
+msgstr ""
+
+#: src/Application.vala:307
+msgid "Stats"
+msgstr ""
+
+#: src/Application.vala:308
+msgid "Continue the Working Countdown"
+msgstr ""
+
+#: src/Application.vala:309
+msgid "Begin the Break Countdown"
+msgstr ""
+
+#: src/Application.vala:332
+#, c-format
+msgid "%s seconds"
+msgstr ""
+
+#: src/Application.vala:392
+msgid "Working Duration (in minutes)"
+msgstr ""
+
+#: src/Application.vala:396
+msgid "Break Duration (in minutes)"
+msgstr ""
+
+#: src/Application.vala:400
+msgid "Auto Dismiss Notification"
+msgstr ""
